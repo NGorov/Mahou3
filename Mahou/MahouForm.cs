@@ -296,7 +296,10 @@ namespace Mahou
 		}
 		void GitHubLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			System.Diagnostics.Process.Start("https://github.com/BladeMight/Mahou");
+			System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo {
+				FileName = "https://github.com/BladeMight/Mahou",
+				UseShellExecute = true
+			});
 		}
 		void btnUpd_Click(object sender, EventArgs e)
 		{
@@ -645,19 +648,19 @@ namespace Mahou
 		}
 		void CreateShortcut() //Creates startup shortcut v2.0, now not uses com. So whole project not need the Windows SDK :p
 		{
-			var exelocation = Assembly.GetExecutingAssembly().Location;
-			var shortcutLocation = System.IO.Path.Combine(
-				                       Environment.GetFolderPath(Environment.SpecialFolder.Startup),
-				                       "Mahou.lnk");
-			if (System.IO.File.Exists(shortcutLocation))
-				return;
-			Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); //Windows Script Host Shell Object
-			dynamic shell = Activator.CreateInstance(t);
+		var exelocation = Environment.ProcessPath ?? System.IO.Path.Combine(AppContext.BaseDirectory, "Mahou.exe");
+		var shortcutLocation = System.IO.Path.Combine(
+			                       Environment.GetFolderPath(Environment.SpecialFolder.Startup),
+			                       "Mahou.lnk");
+		if (System.IO.File.Exists(shortcutLocation))
+			return;
+		Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); //Windows Script Host Shell Object
+		dynamic shell = Activator.CreateInstance(t);
+		try {
+			var lnk = shell.CreateShortcut(shortcutLocation);
 			try {
-				var lnk = shell.CreateShortcut(shortcutLocation);
-				try {
-					lnk.TargetPath = exelocation;
-					lnk.WorkingDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+				lnk.TargetPath = exelocation;
+				lnk.WorkingDirectory = AppContext.BaseDirectory;
 					lnk.IconLocation = exelocation + ", 0";
 					lnk.Description = "Mahou - Magick layout switcher";
 					lnk.Save();

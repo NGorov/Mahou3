@@ -1,3 +1,4 @@
+#pragma warning disable SYSLIB0014 // WebClient and HttpWebRequest are obsolete
 using System;
 using System.Collections.Generic;
 using System.Globalization;
