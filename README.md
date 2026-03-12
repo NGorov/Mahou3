@@ -38,8 +38,6 @@ Mahou работает так как **Вы** хотите, настраивай
 
 ! Скачать [Release_x86_x64.zip](https://gitea.com/BladeMight/Mahou/releases/download/latest-commit/Release_x86_x64.zip).
 
-### Используете Chocolatey? `cinst Mahou` для установки.
-
 ### Wiki
 Ознакомьтесь с [Mahou Wiki](https://gitea.com/BladeMight/Mahou/wiki).
 
