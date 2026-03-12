@@ -26,10 +26,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Resources.Extensions" Version="10.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="getconkbl.dll" Condition="Exists('getconkbl.dll')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

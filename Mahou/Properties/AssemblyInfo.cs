@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Resources;
 
 // Управление общими сведениями о сборке осуществляется с помощью 
@@ -34,3 +35,4 @@ using System.Resources;
 [assembly: AssemblyFileVersion ("2.9.1.0")]
 [assembly: NeutralResourcesLanguage ("")]
 [assembly: AssemblyDefaultAlias ("BladeMight")]
+[assembly: SupportedOSPlatform ("windows7.0")]
