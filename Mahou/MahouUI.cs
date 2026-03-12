@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
-using System.Web;
 
 namespace Mahou {
 	public partial class MahouUI : Form {
@@ -2468,7 +2467,12 @@ START """" """+AppDomain.CurrentDomain.BaseDirectory+@"\Mahou.exe""
 DEL """+restartMahouPath + @"""";
 			Logging.Log("Writing restart script.");
 			File.WriteAllText(restartMahouPath, restartMahou);
-			var piRestartMahou = new ProcessStartInfo() { FileName = restartMahouPath, WindowStyle = ProcessWindowStyle.Hidden };
+			var piRestartMahou = new ProcessStartInfo() {
+				FileName = restartMahouPath,
+				UseShellExecute = true,
+				WindowStyle = ProcessWindowStyle.Hidden,
+				WorkingDirectory = Path.GetDirectoryName(restartMahouPath)
+			};
 			Logging.Log("Starting restart script.");
 			Process.Start(piRestartMahou);
 		}
@@ -3369,6 +3373,7 @@ DEL """+restartMahouPath + @"""";
 				WindowStyle = ProcessWindowStyle.Hidden,
 				Arguments = "/delete /TN MahouAutostart+ /f",
 				CreateNoWindow = true,
+				UseShellExecute = true,
 				Verb = "runas"
 			};
 			Process.Start(pif).WaitForExit();
@@ -4387,6 +4392,8 @@ DEL /Q /F /A ""%TEMP%\UpdateMahou.cmd""";
 				File.WriteAllText(fn, UpdateMahou);
 				var piUpdateMahou = new ProcessStartInfo();
 				piUpdateMahou.FileName = fn;
+				piUpdateMahou.UseShellExecute = true;
+				piUpdateMahou.WorkingDirectory = Path.GetDirectoryName(fn);
 				//Make UpdateMahou.cmd's startup hidden
 				piUpdateMahou.WindowStyle = ProcessWindowStyle.Hidden;
 				//Start updating(unzipping)
@@ -4499,7 +4506,12 @@ DEL ""unzip.vbs""
 DEL ""ExtractASD.cmd""";
 						Logging.Log("Writing extract script.");
 						File.WriteAllText(Path.Combine(Path.GetTempPath(), "ExtractASD.cmd"), ExtractASD);
-						var piExtractASD = new ProcessStartInfo() { FileName = "ExtractASD.cmd", WorkingDirectory = Path.GetTempPath(), WindowStyle = ProcessWindowStyle.Hidden};
+						var piExtractASD = new ProcessStartInfo() {
+							FileName = "ExtractASD.cmd",
+							UseShellExecute = true,
+							WorkingDirectory = Path.GetTempPath(),
+							WindowStyle = ProcessWindowStyle.Hidden
+						};
 						Logging.Log("Starting extract script.");
 						Process.Start(piExtractASD).WaitForExit();
 						resp = File.ReadAllText(Path.Combine(Path.GetTempPath(), "AS_dict.txt"));
@@ -5216,7 +5228,10 @@ DEL ""ExtractASD.cmd""";
 			}
 			string fORd = dir ? Path.GetDirectoryName(file) : file;
 			try {
-				Process.Start(fORd);
+				Process.Start(new ProcessStartInfo {
+					FileName = fORd,
+					UseShellExecute = true
+				});
 			} catch (Exception ex) { Logging.Log("No program to open "+type+", opening skiped. Details:\r\n"+ex.Message + "\r\n" + ex.StackTrace, 2); }
 		}
 		void Lnk_OpenHistoryClicked(object sender, LinkLabelLinkClickedEventArgs e) {
@@ -5276,7 +5291,7 @@ DEL ""ExtractASD.cmd""";
 		}
 		static string expandmenuarg(string arg) {
 			arg = replaceenv(arg, "%clipboard%", () => KMHook.GetClipboard());
-			arg = replaceenv(arg, "%clipboard_url%", () => HttpUtility.UrlEncode(KMHook.GetClipboard()));
+			arg = replaceenv(arg, "%clipboard_url%", () => UrlEncodingCompat.UrlEncode(KMHook.GetClipboard()));
 			arg = replaceenv(arg, "%ini%", () => Configs.filePath);
 			arg = replaceenv(arg, "%mahou_dir%", () => nPath);
 			return arg;
@@ -5309,6 +5324,7 @@ DEL ""ExtractASD.cmd""";
 					var pi = new ProcessStartInfo();
 					pi.FileName = prog;
 					pi.Arguments = args;
+					pi.UseShellExecute = true;
 					var m = re.Matches(prog);
 					if (m.Count > 0) {
 						pi.WorkingDirectory = m[0].Groups[0].Value;

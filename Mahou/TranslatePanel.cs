@@ -5,7 +5,6 @@ using System.Text;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -84,8 +83,8 @@ namespace Mahou {
 		public static string getMultiParams(string[] tls, string[] qs, string[] sls = null) {
 			var multi = new StringBuilder("[");
 			for (int i = 0; i != qs.Length; i++) {
-				multi.Append("{\"q\":\"").Append(HttpUtility.UrlEncode(HttpUtility.UrlPathEncode(
-					qs[i].Replace(" ", "%20")
+				multi.Append("{\"q\":\"").Append(UrlEncodingCompat.UrlEncode(UrlEncodingCompat.UrlPathEncode(
+					qs[i]
 				))).Append("\"").Append(", \"sl\":\"");
 				try {
 					multi.Append(sls[i]);
@@ -126,8 +125,8 @@ namespace Mahou {
 					if (useNA) gl = GTNALink;
 					// corrects GTLink responce encoding.
 					client.Headers["User-Agent"] = "AndroidTranslate/5.3.0.RC02.130475354-53000263 5.1 phone TRANSLATE_OPM5_TEST_1";
-					var url = gl+"&q="+HttpUtility.UrlPathEncode(
-						qs[i].Replace(" ", "%20").Replace("\r", "%0D").Replace("\n", "%0A"))+
+					var url = gl+"&q="+UrlEncodingCompat.UrlPathEncode(
+						qs[i])+
 						"&sl="+sls[i]+"&tl="+tls[i];
 					Debug.WriteLine("url: " + url);
 					var raw_array = Encoding.UTF8.GetString(client.DownloadData(url));
@@ -172,7 +171,7 @@ namespace Mahou {
 					gtresp.targ_transcr = trc;
 //					Debug.WriteLine("trc " + trc + " strc " + strc);
 					det_l = det_l.Substring(1, det_l.Length-2);
-					gtresp.speech_url = GTSpeechLink+"&q="+HttpUtility.UrlEncode(tr)+"&sl="+det_l+"&tl="+tls[i];
+					gtresp.speech_url = GTSpeechLink+"&q="+UrlEncodingCompat.UrlEncode(tr)+"&sl="+det_l+"&tl="+tls[i];
 //					Debug.WriteLine(gtresp.speech_url);
 					if(sls[i] == "auto")
 						gtresp.auto_detect = true;
@@ -202,7 +201,7 @@ namespace Mahou {
 			Debug.WriteLine("UPDATING TRANSLATION::");
 			if (useGS) {
 				Debug.WriteLine("GS MODE!");
-				var multi = HttpUtility.UrlEncode(TranslatePanel.getMultiParams(tls, qs, sls));
+				var multi = UrlEncodingCompat.UrlEncode(TranslatePanel.getMultiParams(tls, qs, sls));
 	//			var multi_resp = getRespContent(TranslatePanel.GTLink+"?multi="+multi);
 				var multi_resp = "";
 				try { multi_resp = Encoding.UTF8.GetString(Encoding.Default.GetBytes(client.DownloadString(TranslatePanel.GSLink+"?multi="+multi)));
