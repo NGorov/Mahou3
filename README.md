@@ -1,4 +1,7 @@
-# На русском. [Read in English](#english)
+- errors, causing crashes, fixed;
+- stability improved, works with Windows 11;
+- compiled version in \bin directory.  
+# [Read in English](#english)
 
 ![](http://i.imgur.com/3BpvbgI.png)
 
@@ -36,8 +39,6 @@ Mahou работает так как **Вы** хотите, настраивай
 ### Версия с последними изменениями (aka latest-commit) [здесь](https://gitea.com/BladeMight/Mahou/releases/tag/latest-commit).
 
 ! Скачать [Release_x86_x64.zip](https://gitea.com/BladeMight/Mahou/releases/download/latest-commit/Release_x86_x64.zip).
-
-### Используете Chocolatey? `cinst Mahou` для установки.
 
 ### Wiki
 Ознакомьтесь с [Mahou Wiki](https://gitea.com/BladeMight/Mahou/wiki).
