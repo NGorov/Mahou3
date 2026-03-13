@@ -1,6 +1,3 @@
-- errors, causing crashes, fixed;
-- stability improved, works with Windows 11;
-- compiled version in \bin directory.  
 # [Read in English](#english)
 
 ![](http://i.imgur.com/3BpvbgI.png)
@@ -54,6 +51,13 @@ Mahou находится под [GPL v2+](https://gitea.com/BladeMight/Mahou/blo
 https://ko-fi.com/blademight
 
 ###### История изменений:
+
+**v3.0.1.0** — 🚀 Major Release
+
+- 🎉 **Полный переход на .NET 10.** Весь код проекта переведён на платформу .NET 10, что обеспечивает значительный прирост производительности, улучшенное управление памятью и доступ к современным API.
+- 🖥️ **Стабильная работа в Windows 11.** Проведена глубокая адаптация под Windows 11 — исправлены проблемы совместимости с WinAPI-хуками, устранены конфликты с новым оконным менеджером и системой уведомлений, обеспечена стабильная длительная работа без сбоев.
+- 🐛 **Исправлен silent crash.** Устранён трудноуловимый баг, при котором процесс Mahou мог тихо завершиться без каких-либо видимых ошибок или уведомлений — теперь программа работает надёжно и уведомляет о любых критических ситуациях.
+- 🔧 **Исправлена автозагрузка.** Полностью переработан механизм добавления Mahou в автозагрузку: прежний способ не работал из-за ограничений прав. Теперь используется создание задачи в Планировщике заданий (Task Scheduler) с запуском от имени администратора, что гарантирует корректный старт при загрузке системы.
 
 <details><summary><b>v2.9.1.0 по 2.0.0.0</b></summary>
 
@@ -823,6 +827,13 @@ or contact me though [email](mailto:BladeMight@gmail.com) (You can ask anything)
 https://ko-fi.com/blademight
 
 ###### Change log:
+
+**v3.0.1.0** — 🚀 Major Release
+
+- 🎉 **Full migration to .NET 10.** The entire codebase has been ported to .NET 10, bringing significant performance improvements, better memory management, and access to modern platform APIs.
+- 🖥️ **Stable Windows 11 support.** Deep compatibility work has been done for Windows 11 — issues with WinAPI hooks, the new window manager, and the notification system have been resolved, ensuring reliable long-running operation without crashes.
+- 🐛 **Silent crash fixed.** A hard-to-detect bug that could cause the Mahou process to silently terminate without any visible errors or notifications has been eliminated — the application now runs reliably and reports any critical issues.
+- 🔧 **Startup autorun fixed.** The mechanism for adding Mahou to system startup has been completely reworked: the previous method failed due to permission restrictions. It now creates a scheduled task (Task Scheduler) that runs as administrator, ensuring Mahou starts correctly on system boot.
 
 <details><summary> v2.9.1.0 to v2.0.0.0</summary>
 
