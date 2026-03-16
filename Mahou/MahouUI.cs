@@ -250,20 +250,6 @@ namespace Mahou {
 				if (MMain.MyConfs.Read("Updates", "LatestCommit").Length == 7)
 					Text += " <"+commit+">";
 			}
-			var mult = 4;
-			if (KMHook.IfNW7())
-				mult = 6;
-			if (tabs.RowCount >= 2)
-				mult++;
-			if (tabs.RowCount >= 3)
-				mult+=2;
-			var pty = tabs.RowCount*mult;
-			var lsy = btn_OK.Location.Y+pty;
-			btn_Apply.Location = new Point(btn_Apply.Location.X, lsy);
-			btn_Cancel.Location = new Point(btn_Cancel.Location.X, lsy);
-			btn_OK.Location = new Point(btn_OK.Location.X, lsy);
-			tabs.Height += pty;
-			Height += pty;
 			#if GITHUB_RELEASE
 			var _rver = Assembly.GetExecutingAssembly().GetName().Version;
 			Text = "Mahou " + _rver.Major + "." + _rver.Minor;
@@ -306,7 +292,7 @@ namespace Mahou {
 				showUpdWnd.Interval = 1000;
 				showUpdWnd.Start();
 			} else { showUpdWnd.Dispose(); }
-			DPISCALE(this);
+			InitializeResponsiveLayout();
 			Memory.Flush();
 		}
 		static NotifyIcon[] Ticons;
@@ -383,51 +369,10 @@ namespace Mahou {
 				Ticons = null;
 			}
 		}
+		/// <summary>Legacy DPI scale factor; kept at 1 when using framework DPI. Used by LangPanel for padding.</summary>
 		public static double xr = 1, yr = 1;
-		public static void DPISCALE_CONTROL(Control c) {
-			int ww = Convert.ToInt32(Convert.ToDouble(c.Width)*xr);
-			int hh = Convert.ToInt32(Convert.ToDouble(c.Height)*yr);
-			c.Width = ww;
-			c.Height = hh;
-//			Debug.WriteLine(ww + " x " + hh);
-		}
-		public static void DPIPOS_CONTROL(Control c) {
-			int xx = Convert.ToInt32(Convert.ToDouble(c.Location.X)*xr);
-			int yy = Convert.ToInt32(Convert.ToDouble(c.Location.Y)*yr);
-			c.Location = new Point(xx, yy);
-//			Debug.WriteLine(xx + " p " + yy);
-		}
-		public static Control[] ALLCONTROLS(Control c) {
-			if (c == null) {return new Control[]{};}
-			List<Control> ctrls = new List<Control>();
-			foreach (Control con in c.Controls) {
-				ctrls.Add(con);
-				ctrls.AddRange(ALLCONTROLS(con));
-			}
-			return ctrls.ToArray();
-		}
-		public static void DPISCALE(Control cxx, bool nox = false) {
-			float dx, dy;
-			Graphics g = cxx.CreateGraphics();
-			try { dx = g.DpiX; dy = g.DpiY; }
-			finally { g.Dispose(); }
-			var es = Convert.ToSingle(96);
-			if (dx.Equals(es) && dy.Equals(es)) { return; }
-			xr = dx/96;
-			yr = dx/96;
-			Control[] Cons = new Control[]{cxx /*, _TranslatePanel, _langPanel, caretLangDisplay, mouseLangDisplay*/};
-			foreach(Control x in Cons) {
-				var cs = ALLCONTROLS(x);
-				if (!nox) {
-					DPIPOS_CONTROL(x);
-					DPISCALE_CONTROL(x);
-				}
-				foreach (var c in cs) {
-					DPIPOS_CONTROL(c);
-					DPISCALE_CONTROL(c);
-				}
-			}
-		}
+		/// <summary>Retired: framework handles DPI via PerMonitorV2. Kept for compatibility; does nothing.</summary>
+		public static void DPISCALE(Control cxx, bool nox = false) { }
 		public static void chrome_window_alt_fix() {
 			var last = Locales.ActiveWindow();
 			var f = new Form();
@@ -5000,20 +4945,18 @@ DEL ""ExtractASD.cmd""";
 		                else
 		                    myBuffer.Graphics.DrawRectangle(Pens.DarkGray, r);
 		
+		                var sf = new System.Drawing.StringFormat();
+		                sf.Alignment = System.Drawing.StringAlignment.Center;
+		                sf.LineAlignment = System.Drawing.StringAlignment.Center;
 		                for (int ii = 0; ii != ItemArgs.Count; ii++) {
 		                	var i = ItemArgs[ii];
 		                	var t = ItemTexts[ii];
-							Debug.WriteLine(i.Bounds);
-//		                	CustomDrawItem(ItemArgs[i], ItemTexts[i]);
 							myBuffer.Graphics.DrawRectangle(new Pen(TAB_BORDERS), i.Bounds.X, i.Bounds.Y, i.Bounds.Width, i.Bounds.Height);
-							var yal = i.Bounds.Y;
-							var xal = i.Bounds.X;
-							if (i.Bounds.Height == 24) { // Assume that is focused tab
-								yal += 4;
-								xal += 6;
+							if (SelectedIndex == ii) {
 								myBuffer.Graphics.FillRectangle(new SolidBrush(TAB_FOCUS_BG), i.Bounds.X+1, i.Bounds.Y+1, i.Bounds.Width-2, i.Bounds.Height-2);
 							}
-							myBuffer.Graphics.DrawString(t, i.Font, new SolidBrush(FG), xal, yal);
+							var textRect = new System.Drawing.RectangleF(i.Bounds.X, i.Bounds.Y, i.Bounds.Width, i.Bounds.Height);
+							myBuffer.Graphics.DrawString(t, i.Font, new SolidBrush(FG), textRect, sf);
 		                }
 		
 		                myBuffer.Render();
@@ -6053,14 +5996,18 @@ DEL ""ExtractASD.cmd""";
 			_set.Name = "set_"+NCRSetsCount;
 			var top = 1;
 			if (NCRSetsCount > 1)
-				top = pan_NoConvertRules.Controls["set_"+(NCRSetsCount-1)].Top+25;
-			_set.Height = 27;
+				top = pan_NoConvertRules.Controls["set_"+(NCRSetsCount-1)].Top+ScaleLogical(28);
+			_set.Height = ScaleLogical(28);
 			_set.Top = top;
 			_set.Left = 1;
 			var _baseLeft = (int)(pan_NoConvertRules.Width*2/100);
-			var rule = new TextBoxCA(){ Left = _baseLeft, Name = "rule"+NCRSetsCount, Width = pan_NoConvertRules.Width/3, Text = "^[A-Z]+$", Top=2 };
-			var isnip = new CheckBox(){ Left = _baseLeft+rule.Width+5, Name = "isnip"+NCRSetsCount, Width = pan_NoConvertRules.Width/5, Text = MMain.Lang[Languages.Element.tab_Snippets], Top=2};
-			var iauto = new CheckBox(){ Left = _baseLeft+rule.Width+5+isnip.Width, Name = "iauto"+NCRSetsCount, Width = pan_NoConvertRules.Width/5, Text = MMain.Lang[Languages.Element.tab_AutoSwitch], Top=2};
+			var rule_width = Math.Max(pan_NoConvertRules.Width/3, ScaleLogical(120));
+			var chk_width = ScaleLogical(95);
+			var rule = new TextBoxCA(){ Left = _baseLeft, Name = "rule"+NCRSetsCount, Width = rule_width, Text = "^[A-Z]+$", Top=2, MinimumSize = new Size(ScaleLogical(100), 0) };
+			var isnip = new CheckBox(){ Left = _baseLeft+rule_width+ScaleLogical(5), Name = "isnip"+NCRSetsCount, Text = MMain.Lang[Languages.Element.tab_Snippets], Top=2};
+			isnip.AutoSize = true;
+			var iauto = new CheckBox(){ Left = _baseLeft+rule_width+ScaleLogical(5)+chk_width+ScaleLogical(5), Name = "iauto"+NCRSetsCount, Text = MMain.Lang[Languages.Element.tab_AutoSwitch], Top=2};
+			iauto.AutoSize = true;
 			_set.Controls.Add(rule);
 			_set.Controls.Add(isnip);
 			_set.Controls.Add(iauto);
@@ -6076,33 +6023,43 @@ DEL ""ExtractASD.cmd""";
 		void Btn_TrAddSetClick(object sender, EventArgs e) {
 			if (TrSetCount>98) return;
 			var _set = new Panel();
-			_set.Width = (pan_TrSets.Width*98/100)-2;
 			TrSetCount++;
 			_set.Name = "set_"+TrSetCount;
+			var left = ScaleLogical(6);
 			var top = 1;
 			if (TrSetCount>1)
-				top = pan_TrSets.Controls["set_"+(TrSetCount-1)].Top+25;
-			_set.Height = 23;
+				top = pan_TrSets.Controls["set_"+(TrSetCount-1)].Top+ScaleLogical(32);
+			_set.Height = ScaleLogical(32);
 			_set.Top = top;
-			_set.Left = 1;
-			var _baseLeft = (int)(pan_TrSets.Width*2/100);
-			var lbl_width = 25;
-			var lbl_frto_width = 40;
-			var cbb_width = 160;
-			_set.Controls.Add(new Label(){Left = _baseLeft, Name="lbl_num"+TrSetCount, Width=lbl_width, Text=TrSetCount+":", Top=2});
-			var fr_lbl = new Label() {Left = _baseLeft+lbl_width, Name="lbl_fr"+TrSetCount, Width=lbl_frto_width, Text="From:", Top=2};
-			var fr_cbb = new ComboBox(){DropDownStyle = ComboBoxStyle.DropDownList, Left = _baseLeft+lbl_width+lbl_frto_width+9, Name="cbb_fr"+TrSetCount, Width=cbb_width};
-			var to_lbl = new Label() {Left = _baseLeft+lbl_width+lbl_frto_width+49+cbb_width, Name="lbl_to"+TrSetCount, Width=lbl_frto_width, Text="To:", Top=2};
-			var to_cbb = new ComboBox(){DropDownStyle = ComboBoxStyle.DropDownList, Left = _baseLeft+lbl_width+lbl_frto_width+49+cbb_width+lbl_frto_width+9, Name="cbb_to"+TrSetCount, Width=cbb_width};
+			_set.Left = left;
+			_set.Width = Math.Max(pan_TrSets.Width - left - ScaleLogical(8), ScaleLogical(350));
+			var _baseLeft = ScaleLogical(16);
+			var lbl_width = ScaleLogical(32);
+			var gap = ScaleLogical(9);
+			var cbb_width = ScaleLogical(240);
+			var fr_lbl = new Label() { Name="lbl_fr"+TrSetCount, Text="From:", AutoSize = true };
+			var to_lbl = new Label() { Name="lbl_to"+TrSetCount, Text="To:", AutoSize = true };
+			var fr_lbl_width = Math.Max(TextRenderer.MeasureText("From:", fr_lbl.Font).Width + 4, ScaleLogical(45));
+			var to_lbl_width = Math.Max(TextRenderer.MeasureText("To:", to_lbl.Font).Width + 4, ScaleLogical(30));
+			var lbl_num = new Label(){Left = _baseLeft, Name="lbl_num"+TrSetCount, Text=TrSetCount+":", Top=2};
+			lbl_num.AutoSize = true;
+			var lbl_num_width = Math.Max(TextRenderer.MeasureText(TrSetCount+":", lbl_num.Font).Width + 4, lbl_width);
+			_set.Controls.Add(lbl_num);
+			fr_lbl.Location = new Point(_baseLeft+lbl_num_width, 2);
+			fr_lbl.AutoSize = true;
+			var fr_cbb = new ComboBox(){DropDownStyle = ComboBoxStyle.DropDownList, Left = _baseLeft+lbl_num_width+fr_lbl_width+gap, Name="cbb_fr"+TrSetCount, Width=cbb_width, DropDownWidth = ScaleLogical(320), MinimumSize = new Size(cbb_width, 0)};
+			var arr_left = _baseLeft+lbl_num_width+fr_lbl_width+gap+cbb_width;
+			_set.Controls.Add(fr_lbl);
+			_set.Controls.Add(fr_cbb);
+			_set.Controls.Add(new Label(){Left = arr_left, Name="lbl_arr"+TrSetCount, Width=lbl_width, Text="->", Top=2});
+			to_lbl.Location = new Point(arr_left+lbl_width+gap, 2);
+			var to_cbb = new ComboBox(){DropDownStyle = ComboBoxStyle.DropDownList, Left = arr_left+lbl_width+gap+to_lbl_width+gap, Name="cbb_to"+TrSetCount, Width=cbb_width, DropDownWidth = ScaleLogical(320), MinimumSize = new Size(cbb_width, 0)};
 			fr_cbb.SelectedIndexChanged += new EventHandler(Cbb_FrToSelectedIndexChanged);
 			to_cbb.SelectedIndexChanged += new EventHandler(Cbb_FrToSelectedIndexChanged);
 //			cbb.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
 			fr_cbb.Items.AddRange(TranslatePanel.GTLangs);
 			to_cbb.Items.AddRange(TranslatePanel.GTLangs);
 			fr_cbb.SelectedIndex = to_cbb.SelectedIndex = 0;
-			_set.Controls.Add(fr_lbl);
-			_set.Controls.Add(fr_cbb);
-			_set.Controls.Add(new Label(){Left = _baseLeft+lbl_width+lbl_frto_width+20+cbb_width, Name="lbl_arr"+TrSetCount, Width=lbl_width, Text="->", Top=2});
 			_set.Controls.Add(to_lbl);
 			_set.Controls.Add(to_cbb);
 //			SpecKeySetsValues["cbb_fr"+TrSetCount+"_key"] = SpecKeySetsValues["txt_key"+TrSetCount+"_mods"] = SpecKeySetsValues["cbb_typ"+TrSetCount] = "";
@@ -6129,27 +6086,29 @@ DEL ""ExtractASD.cmd""";
 			_set.Name = "set_"+SpecKeySetCount;
 			var top = 1;
 			if (SpecKeySetCount>1)
-				top = pan_KeySets.Controls["set_"+(SpecKeySetCount-1)].Top+25;
-			_set.Height = 23;
+				top = pan_KeySets.Controls["set_"+(SpecKeySetCount-1)].Top+ScaleLogical(28);
+			_set.Height = ScaleLogical(28);
 			_set.Top = top;
 			_set.Left = 1;
 			var _baseLeft = (int)(pan_KeySets.Width*2/100);
-			var txt_width = 190;
-			var chk_width = 45;
-			var lbl_width = 25;
-			var cbb_width = 190;
+			var txt_width = ScaleLogical(190);
+			var chk_width = ScaleLogical(50);
+			var lbl_width = ScaleLogical(25);
+			var cbb_width = ScaleLogical(260);
 			_set.Controls.Add(new Label(){Left = _baseLeft, Name="lbl_num"+SpecKeySetCount, Width=lbl_width, Text=SpecKeySetCount+":", Top=2});
 			var txt = new TextBox(){Left = _baseLeft+lbl_width, Name="txt_key"+SpecKeySetCount, Width=txt_width, BackColor=SystemColors.Window, ReadOnly=true};
 			txt.KeyDown += new KeyEventHandler(Txt_SpecHotkeyDown);
-			var chk = new CheckBox(){Left = _baseLeft+lbl_width+txt_width+3, Name="chk_win"+SpecKeySetCount, Width=chk_width, Text="Win"};
+			var chk = new CheckBox(){Left = _baseLeft+lbl_width+txt_width+ScaleLogical(3), Name="chk_win"+SpecKeySetCount, Text="Win", Top=2};
+			chk.AutoSize = true;
 			chk.CheckedChanged += new EventHandler(Chk_SpecWinCheckedChanged);
-			var cbb = new ComboBox(){DropDownStyle = ComboBoxStyle.DropDownList, Left = _baseLeft+lbl_width+txt_width+chk_width+lbl_width+9, Name="cbb_typ"+SpecKeySetCount, Width=cbb_width};
+			var arr_left = _baseLeft+lbl_width+txt_width+chk_width+ScaleLogical(6);
+			var cbb = new ComboBox(){DropDownStyle = ComboBoxStyle.DropDownList, Left = arr_left+lbl_width+ScaleLogical(9), Name="cbb_typ"+SpecKeySetCount, Width=cbb_width, DropDownWidth = ScaleLogical(320), MinimumSize = new Size(cbb_width, 0)};
 			cbb.SelectedIndexChanged += new EventHandler(Cbb_SpecTypeSelectedIndexChanged);
 			cbb.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
 			cbb.Items.AddRange(MMain.lcnmid.ToArray());
 			_set.Controls.Add(txt);
 			_set.Controls.Add(chk);
-			_set.Controls.Add(new Label(){Left = _baseLeft+lbl_width+txt_width+chk_width+6, Name="lbl_arr"+SpecKeySetCount, Width=lbl_width, Text="->", Top=2});
+			_set.Controls.Add(new Label(){Left = arr_left, Name="lbl_arr"+SpecKeySetCount, Width=lbl_width, Text="->", Top=2});
 			_set.Controls.Add(cbb);
 			SpecKeySetsValues["txt_key"+SpecKeySetCount+"_key"] = SpecKeySetsValues["txt_key"+SpecKeySetCount+"_mods"] = SpecKeySetsValues["cbb_typ"+SpecKeySetCount] = "";
 			pan_KeySets.Controls.Add(_set);
@@ -6270,22 +6229,24 @@ DEL ""ExtractASD.cmd""";
 		static string HotkeyForm_hotkey = "";
 		class HotkeyForm : Form {
 			Label hk;
+			int Sc(int v) => (int)Math.Round(v * DeviceDpi / 96f);
 			public HotkeyForm() {
 				this.FormBorderStyle = FormBorderStyle.None;
 				this.ShowInTaskbar = false;
 				this.BackColor = Color.ForestGreen;
 				this.hk = new Label();
-				this.hk.AutoSize = false;
-				this.hk.Width = 238;
+				this.hk.AutoSize = true;
 				this.hk.Font = new Font(this.hk.Font.FontFamily, 14);
-				this.hk.Height = 26;
+				this.hk.Padding = new Padding(Sc(8), Sc(4), Sc(8), Sc(4));
 				this.hk.BackColor = Color.White;
 				this.hk.ForeColor = Color.Orange;
-				this.hk.Location = new Point(1,1);
+				this.hk.Location = new Point(1, 1);
+				this.hk.MaximumSize = new Size(Sc(400), 0);
 				this.Controls.Add(hk);
-				this.MinimumSize = new Size(50,10);
-				this.Width = 240;
-				this.Height = 28;
+				this.MinimumSize = new Size(Sc(60), Sc(36));
+				this.AutoSize = true;
+				this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+				this.Padding = new Padding(1);
 				this.CenterToScreen();
 				this.TopMost = true;
 			}

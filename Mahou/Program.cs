@@ -10,8 +10,6 @@ namespace Mahou
 		#region DLLs
 		[DllImport("user32.dll")]
 		public static extern uint RegisterWindowMessage(string message);
-		[System.Runtime.InteropServices.DllImport("user32.dll")]
-		static extern bool SetProcessDPIAware();
 		#endregion
 		#region Prevent another instance variables
 		/// GGPU = Global GUID PC User
@@ -42,8 +40,8 @@ namespace Mahou
 	#endregion
 		[STAThread] //DO NOT REMOVE THIS
         public static void Main(string[] args) {
+			Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
 			Application.EnableVisualStyles(); // at first enable styles.
-			SetProcessDPIAware();
 			//Catch any error during program runtime
 		AppDomain.CurrentDomain.UnhandledException += (obj, arg) => {
 			var ex = (Exception)arg.ExceptionObject;

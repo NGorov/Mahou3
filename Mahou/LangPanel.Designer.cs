@@ -1,20 +1,13 @@
-// File created by NGorov 14.03.2026
 namespace Mahou
 {
 	partial class LangPanel
 	{
-		/// <summary>
-		/// Designer variable used to keep track of non-visual components.
-		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 		private System.Windows.Forms.Label lbl_LayoutName;
 		private System.Windows.Forms.PictureBox pct_Flag;
 		private System.Windows.Forms.PictureBox pct_Upper;
-		
-		/// <summary>
-		/// Disposes resources used by the form.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		private System.Windows.Forms.FlowLayoutPanel flowRoot;
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing) {
@@ -24,39 +17,41 @@ namespace Mahou
 			}
 			base.Dispose(disposing);
 		}
-		
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
+
 		private void InitializeComponent()
 		{
+			this.flowRoot = new System.Windows.Forms.FlowLayoutPanel();
 			this.lbl_LayoutName = new System.Windows.Forms.Label();
 			this.pct_Flag = new System.Windows.Forms.PictureBox();
 			this.pct_Upper = new System.Windows.Forms.PictureBox();
 			((System.ComponentModel.ISupportInitialize)(this.pct_Flag)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pct_Upper)).BeginInit();
+			this.flowRoot.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// lbl_LayoutName
+			// flowRoot
 			// 
-			this.lbl_LayoutName.AutoSize = true;
-			this.lbl_LayoutName.Location = new System.Drawing.Point(24, 4);
-			this.lbl_LayoutName.Name = "lbl_LayoutName";
-			this.lbl_LayoutName.Size = new System.Drawing.Size(0, 13);
-			this.lbl_LayoutName.TabIndex = 0;
-			this.lbl_LayoutName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.lbl_LayoutName.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LangPanelMouseDown);
-			this.lbl_LayoutName.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LangPanelMouseMove);
-			this.lbl_LayoutName.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LangPanelMouseUp);
+			this.flowRoot.AutoSize = true;
+			this.flowRoot.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.flowRoot.Controls.Add(this.pct_Flag);
+			this.flowRoot.Controls.Add(this.pct_Upper);
+			this.flowRoot.Controls.Add(this.lbl_LayoutName);
+			this.flowRoot.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
+			this.flowRoot.Location = new System.Drawing.Point(0, 0);
+			this.flowRoot.Margin = new System.Windows.Forms.Padding(0);
+			this.flowRoot.Name = "flowRoot";
+			this.flowRoot.Padding = new System.Windows.Forms.Padding(4);
+			this.flowRoot.Size = new System.Drawing.Size(24, 24);
+			this.flowRoot.TabIndex = 0;
+			this.flowRoot.WrapContents = false;
 			// 
 			// pct_Flag
 			// 
 			this.pct_Flag.BackgroundImage = global::Mahou.Properties.Resources.jp;
 			this.pct_Flag.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this.pct_Flag.InitialImage = null;
-			this.pct_Flag.Location = new System.Drawing.Point(4, 4);
+			this.pct_Flag.Location = new System.Drawing.Point(7, 7);
+			this.pct_Flag.Margin = new System.Windows.Forms.Padding(0);
 			this.pct_Flag.Name = "pct_Flag";
 			this.pct_Flag.Size = new System.Drawing.Size(16, 16);
 			this.pct_Flag.TabIndex = 1;
@@ -70,7 +65,8 @@ namespace Mahou
 			this.pct_Upper.BackgroundImage = global::Mahou.Properties.Resources.up;
 			this.pct_Upper.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this.pct_Upper.InitialImage = null;
-			this.pct_Upper.Location = new System.Drawing.Point(20, 4);
+			this.pct_Upper.Location = new System.Drawing.Point(23, 7);
+			this.pct_Upper.Margin = new System.Windows.Forms.Padding(0);
 			this.pct_Upper.Name = "pct_Upper";
 			this.pct_Upper.Size = new System.Drawing.Size(16, 16);
 			this.pct_Upper.TabIndex = 2;
@@ -80,16 +76,29 @@ namespace Mahou
 			this.pct_Upper.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LangPanelMouseMove);
 			this.pct_Upper.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LangPanelMouseUp);
 			// 
+			// lbl_LayoutName
+			// 
+			this.lbl_LayoutName.AutoSize = true;
+			this.lbl_LayoutName.Location = new System.Drawing.Point(39, 7);
+			this.lbl_LayoutName.Margin = new System.Windows.Forms.Padding(0);
+			this.lbl_LayoutName.MinimumSize = new System.Drawing.Size(40, 0);
+			this.lbl_LayoutName.Name = "lbl_LayoutName";
+			this.lbl_LayoutName.TabIndex = 0;
+			this.lbl_LayoutName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.lbl_LayoutName.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LangPanelMouseDown);
+			this.lbl_LayoutName.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LangPanelMouseMove);
+			this.lbl_LayoutName.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LangPanelMouseUp);
+			// 
 			// LangPanel
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.AutoSize = true;
+			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BackColor = System.Drawing.SystemColors.Window;
 			this.ClientSize = new System.Drawing.Size(40, 24);
 			this.ControlBox = false;
-			this.Controls.Add(this.pct_Upper);
-			this.Controls.Add(this.pct_Flag);
-			this.Controls.Add(this.lbl_LayoutName);
+			this.Controls.Add(this.flowRoot);
 			this.Cursor = System.Windows.Forms.Cursors.Arrow;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;
@@ -109,9 +118,10 @@ namespace Mahou
 			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LangPanelMouseUp);
 			((System.ComponentModel.ISupportInitialize)(this.pct_Flag)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pct_Upper)).EndInit();
+			this.flowRoot.ResumeLayout(false);
+			this.flowRoot.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
-
 		}
 	}
 }

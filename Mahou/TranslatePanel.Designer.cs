@@ -1,4 +1,4 @@
-﻿using JustUI;
+using JustUI;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -6,20 +6,13 @@ namespace Mahou
 {
 	partial class TranslatePanel
 	{
-		/// <summary>
-		/// Designer variable used to keep track of non-visual components.
-		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 		private JustUI.JUIButton X;
 		private JustUI.JUITitle TITLE;
 		private ColorPanel pan_Translations;
 		MahouUI.TextBoxCA txt_Source;
 		private System.Windows.Forms.Button bull;
-		
-		/// <summary>
-		/// Disposes resources used by the form.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing) {
@@ -29,12 +22,7 @@ namespace Mahou
 			}
 			base.Dispose(disposing);
 		}
-		
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
+
 		private void InitializeComponent()
 		{
 			this.X = new JustUI.JUIButton();
@@ -63,11 +51,12 @@ namespace Mahou
 			// 
 			// TITLE
 			// 
+			this.TITLE.AutoSize = true;
 			this.TITLE.BackColor = System.Drawing.SystemColors.Window;
 			this.TITLE.ForeColor = System.Drawing.SystemColors.WindowText;
 			this.TITLE.Location = new System.Drawing.Point(0, 0);
+			this.TITLE.MinimumSize = new System.Drawing.Size(80, 0);
 			this.TITLE.Name = "TITLE";
-			this.TITLE.Size = new System.Drawing.Size(100, 23);
 			this.TITLE.TabIndex = 1;
 			this.TITLE.Text = "Translation";
 			this.TITLE.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -82,11 +71,12 @@ namespace Mahou
 			// txt_Source
 			// 
 			this.txt_Source.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.txt_Source.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.txt_Source.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline);
 			this.txt_Source.Location = new System.Drawing.Point(13, 28);
+			this.txt_Source.MinimumSize = new System.Drawing.Size(120, 0);
 			this.txt_Source.Name = "txt_Source";
 			this.txt_Source.ReadOnly = true;
-			this.txt_Source.Size = new System.Drawing.Size(100, 13);
+			this.txt_Source.Size = new System.Drawing.Size(150, 20);
 			this.txt_Source.TabIndex = 4;
 			this.txt_Source.TabStop = false;
 			this.txt_Source.Text = "source text";
@@ -102,8 +92,8 @@ namespace Mahou
 			// 
 			// TranslatePanel
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.BackColor = System.Drawing.SystemColors.Window;
 			this.ClientSize = new System.Drawing.Size(172, 179);
 			this.ControlBox = false;
@@ -128,7 +118,6 @@ namespace Mahou
 			this.Deactivate += new System.EventHandler(this.TranslatePanelDeactivate);
 			this.ResumeLayout(false);
 			this.PerformLayout();
-
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Mahou
@@ -52,12 +52,8 @@ namespace Mahou
 			else if (!Upper && pct_UpperArrow.Visible)
 				pct_UpperArrow.Visible = false;
 			if (lastvis != pct_UpperArrow.Visible) {
+				flowRoot.PerformLayout();
 				ReSize();
-				if (Upper) {
-					pct_UpperArrow.Left = Width;
-					pct_UpperArrow.Top = (Height - 16)/2+1;
-					Width = Width + 16;
-				}
 				lastsize = Size;
 			}
 		}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -17,16 +17,17 @@ namespace Mahou {
 			Width = Height = 0;
 			this.FormClosing += (s, e) => { e.Cancel = true; this.Hide(); };
 			AeroCheck();
-			MahouUI.DPISCALE(this);
-			l = Convert.ToInt32(MahouUI.xr*bg_padding);
+			l = ScaleLogical(bg_padding);
+			flowRoot.Padding = new Padding(l);
 			outsidefix(pct_Flag);
 			outsidefix(pct_Upper);
 			outsidefix(lbl_LayoutName);
 			UpdateApperence(BackColor, ForeColor, (int)(Opacity*100), Font);
 		}
+		int ScaleLogical(int value) { return (int)Math.Round(value * DeviceDpi / 96F); }
 		void outsidefix(Control p) {
 			var outside = p.Height;
-			if (outside >= this.Height) {
+			if (this.Height > 0 && outside >= this.Height) {
 				p.Height -= outside-this.Height+1+p.Location.Y;
 			}
 		}
@@ -35,11 +36,12 @@ namespace Mahou {
 		public Point mouseLocation;
 		public bool snap_l, snap_r, snap_t, snap_b;
 		public void ChangeLayout(Bitmap flag, string layoutName) {
-			l = bg_padding;
+			l = ScaleLogical(bg_padding);
+			flowRoot.Padding = new Padding(l);
 			lbl_LayoutName.Text = display_layoutname ? layoutName : "";
 			if (display_flag) {
-				pct_Flag.Width = 16;
-				pct_Flag.Height = 16;
+				pct_Flag.Width = ScaleLogical(16);
+				pct_Flag.Height = ScaleLogical(16);
 				pct_Flag.Visible = true;
 				pct_Flag.BackgroundImage = new Bitmap(flag);
 			} else {
@@ -47,25 +49,20 @@ namespace Mahou {
 				pct_Flag.Height = 0;
 				pct_Flag.Visible = false;
 			}
-			if (display_layoutname) {
-				lbl_LayoutName.Left = l+pct_Flag.Width + (pct_Upper.Visible ? pct_Upper.Width : 0);
-				Width = lbl_LayoutName.Left + lbl_LayoutName.Width + l;
-			}
+			flowRoot.PerformLayout();
 			ReSnap();
 		}
 		public void DisplayUpper(bool Upper) {
-			l = bg_padding;
+			l = ScaleLogical(bg_padding);
+			flowRoot.Padding = new Padding(l);
 			pct_Upper.Visible = Upper;
-			if (!display_flag) {
-				pct_Upper.Left = l;
-			} else {
-				pct_Upper.Left = l+pct_Flag.Width;
+			if (Upper) {
+				pct_Upper.Width = ScaleLogical(16);
+				pct_Upper.Height = ScaleLogical(16);
 			}
-			var side = Upper ? (l+pct_Flag.Width+pct_Upper.Width) : (l+pct_Flag.Width);
-			Width = side + (display_layoutname ? lbl_LayoutName.Width : 0) + l;
-			lbl_LayoutName.Left = display_flag ? side : (Upper ? (pct_Upper.Width+l) : l);
+			flowRoot.PerformLayout();
 			ReSnap();
-        }
+		}
 		void ReSnap() {
 			var scr = Screen.FromPoint(Location);
 			if (Location.X + Width > scr.Bounds.Width)
@@ -140,25 +137,21 @@ namespace Mahou {
 			}
 		}
 		public void UpdateApperence(Color back, Color fore, int opacity, Font font) {
-			Height = display_flag ? 16 : lbl_LayoutName.Height;
-			Width = (display_flag ? 16 : 0)+(pct_Upper.Visible ? 16 : 0)+
-				((lbl_LayoutName.Text == "" || !display_layoutname) ? 0 : lbl_LayoutName.Width);
 			if (transparentBG) {
-				l = disableBorder ? 0 : bg_padding;
+				l = disableBorder ? 0 : ScaleLogical(bg_padding);
 				TransparencyKey = BackColor = Color.PaleTurquoise;
 			} else {
-				l = bg_padding;
+				l = ScaleLogical(bg_padding);
 				BackColor = back;
 			}
-			Height += l+l;
-			Width += l+l;
-			var m = new Message();
-			m.Msg = WinAPI.WM_NCPAINT;
-			WndProc(ref m);
-			pct_Flag.Left = pct_Flag.Top = pct_Upper.Top = lbl_LayoutName.Top = l;
+			flowRoot.Padding = new Padding(l);
 			lbl_LayoutName.ForeColor = fore;
 			lbl_LayoutName.Font = font;
 			Opacity = (double)opacity / 100;
+			flowRoot.PerformLayout();
+			var m = new Message();
+			m.Msg = WinAPI.WM_NCPAINT;
+			WndProc(ref m);
 			Invalidate();
 		}
 		#endregion

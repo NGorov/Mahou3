@@ -32,7 +32,7 @@ namespace Mahou {
 			this.FormClosing += (s, e) => { e.Cancel = true; this.Hide(); };
 			X.Width = 23;
 			X.Text = "X";
-			TITLE.AutoEllipsis = true;
+			TITLE.AutoSize = true;
 			X.TabStop = false;
 			TabStop = false;
 			X.TabIndex = 99999;
@@ -572,10 +572,12 @@ namespace Mahou {
 			var g = CreateGraphics();
 			var size = g.MeasureString(TITLE.Text + "  ", TITLE.Font);
 			g.Dispose();
-			TITLE.Width = (int)size.Width+1;
-			var TITLEw = (TITLE.Width+X.Width);
+			var titleW = (int)size.Width + 1;
+			if (!TITLE.AutoSize)
+				TITLE.Width = titleW;
+			var TITLEw = (TITLE.AutoSize ? titleW : TITLE.Width) + X.Width;
 			if (Width < TITLEw)
-				Width = TITLEw+3;
+				Width = TITLEw + 3;
 		}
 		public void SetTitle(string title) {
 			TITLE.Text = title;
@@ -664,7 +666,8 @@ namespace Mahou {
 			SetAboveTitleWidth();
 			TITLE.Location = new Point(1, 1);
 			X.Location = new Point(Width - 24, 1);
-			TITLE.Width = Width - 1 - X.Width - 1;
+			if (!TITLE.AutoSize)
+				TITLE.Width = Width - 1 - X.Width - 1;
 			txt_Source.Location = new Point(11, TITLE.Height+1);
 //			txt_Source.TextAlign = HorizontalAlignment.Center;
 //			txt_Source.Width = Width -20-2;

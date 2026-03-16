@@ -4926,18 +4926,19 @@ namespace Mahou
 			// 
 			// MahouUI
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(565, 361);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.ClientSize = new System.Drawing.Size(920, 700);
 			this.Controls.Add(this.btn_Apply);
 			this.Controls.Add(this.btn_Cancel);
 			this.Controls.Add(this.btn_OK);
 			this.Controls.Add(this.tabs);
-			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
 			this.Icon = global::Mahou.Properties.Resources.Mahou;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
+			this.MaximizeBox = true;
+			this.MinimizeBox = true;
+			this.MinimumSize = new System.Drawing.Size(640, 480);
 			this.Name = "MahouUI";
 			this.Text = "MahouUI";
 			this.Activated += new System.EventHandler(this.MahouUIActivated);
