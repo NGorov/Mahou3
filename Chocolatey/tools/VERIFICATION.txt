@@ -1,0 +1,22 @@
+VERIFICATION
+
+Verification is intended to assist the Chocolatey moderators and community
+in verifying that this package's contents are trustworthy.
+
+The embedded software (Release_x86_x64.zip) has been downloaded from the
+official GitHub release of the Mahou project.
+
+1. Download the official release archive from:
+   https://github.com/NGorov/Mahou/releases/download/v3.0/Release_x86_x64.zip
+
+2. Calculate the SHA256 checksum of the downloaded file. In PowerShell:
+   Get-FileHash Release_x86_x64.zip -Algorithm SHA256
+
+3. Compare the checksum with the value used in this package:
+   4BA9D2579C1A34C67C65862C52419594F4E9412D65996911D7260606CED0DB1C
+
+4. The file included in this package was taken directly from the official
+   GitHub release without any modifications.
+
+Project URL : https://github.com/NGorov/Mahou
+License URL : https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
