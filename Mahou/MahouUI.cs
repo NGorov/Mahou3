@@ -4430,47 +4430,43 @@ DEL ""ExtractASD.cmd""";
 			return t.Substring(c,t.Length-(c+1));
 		}
 		/// <summary>
-		/// Gets update info, and sets it to static [UpdInfo] string.
+		/// Gets update info from https://github.com/NGorov/Mahou/releases, sets static [UpdInfo].
 		/// </summary>
 		void GetUpdateInfo() {
 			var Info = new string[5] {"","","","",""} ; // Update info
-			var api = "https://api.github.com/repos/NGorov/Mahou/releases";
-			var url = api+"/latest";
-			var beta = MMain.MyConfs.Read("Updates", "Channel") != "Stable";
-			if (beta) {
-				url = api+"/tags/latest-commit";
-			}
+			var url = "https://api.github.com/repos/NGorov/Mahou/releases/latest";
 			var data = getResponce(url);
 			if (!String.IsNullOrEmpty(data)) {
-//				Debug.WriteLine(data);
 				var a = new Auri(data);
 				var Title = trimlr(a["name"]);
 				var Description = trimlr(a["body"]);
-				// cosmetics
 				Description = Description.Replace(":memo:", "📝").Replace(":gem:", "💎").Replace(":bug:", "🐛")
 						   				 .Replace(":speech_balloon:", "💬").Replace(":rocket:", "🚀");
 				Description = Regex.Unescape(Description);
 				var Version = trimlr(a["tag_name"]);
 				var aa = new Auri(a["assets"]);
-				var Lindex = "0";
-				var Commit = "";
-				if (beta) {
-					Lindex = "7";
-					Commit = Regex.Match(Title, @".*\[([a-fA-F0-9]{7})\]").Groups[1].Value;
+				var Link = "";
+				for (var i = 0; i < 16; i++) {
+					try {
+						var asset = aa["^" + i];
+						if (string.IsNullOrEmpty(asset)) break;
+						var au = new Auri(asset);
+						var u = trimlr(au["browser_download_url"]);
+						if (!string.IsNullOrEmpty(u) && u.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) {
+							Link = u;
+							break;
+						}
+					} catch { break; }
 				}
-				var Link = trimlr(new Auri(aa["^"+Lindex])["browser_download_url"]);
-				Debug.WriteLine(Title);
-				Debug.WriteLine(Description);
-				Debug.WriteLine(Version);
-				Debug.WriteLine(Commit);
-				Debug.WriteLine(Link);
+				if (string.IsNullOrEmpty(Link) && !string.IsNullOrEmpty(aa["^0"]))
+					Link = trimlr(new Auri(aa["^0"])["browser_download_url"]);
+				if (string.IsNullOrEmpty(Link))
+					Link = "https://github.com/NGorov/Mahou/releases";
 				Info[0] = Title;
 				Info[1] = UnescapeUnicode(Description);
 				Info[2] = Version;
 				Info[3] = Link;
-				if (!String.IsNullOrEmpty(Commit))
-					Info[4] = Commit;
-				Logging.Log("Check for updates succeded, GitHub "+ (beta ? ("commit:"+ Commit) : ("version: " + Version)) + ".");
+				Logging.Log("Check for updates succeeded, GitHub version: " + Version + ".");
 			} else {
 				Logging.Log("Check for updates failed, error above.", 1);
 				Info = new string[]{
@@ -4521,9 +4517,8 @@ DEL ""ExtractASD.cmd""";
 			bool silent = MMain.MyConfs.ReadBool("Functions", "SilentUpdate");
 			Debug.WriteLine(UpdInfo[2]);
 			try {
-				if ((UpdInfo[2] == "latest-commit" || MMain.MyConfs.Read("Updates", "Channel") != "Stable") ?
-				    MMain.MyConfs.Read("Updates", "LatestCommit") != UpdInfo[4] :
-				    flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2])) {
+				var currentVer = "v" + Application.ProductVersion.Trim();
+				if (flVersion(currentVer) < flVersion(UpdInfo[2]) || MMain.mahou.Text.Contains("dev")) {
 					Logging.Log("New version available, " + (!silent ? "showing dialog..." : "silent updating..."));
 					if (silent)
 						AtUpdateShow = 1;
@@ -5077,8 +5072,8 @@ DEL ""ExtractASD.cmd""";
 		public static float flVersion(string ver) {
 			var justdigs = Regex.Replace(ver, "\\D", "");
 			float fl = 0.0f;
-			if (justdigs.Length > 2) {
-				var strfl = justdigs[0] + "." + justdigs.Substring(1);
+			if (justdigs.Length >= 1) {
+				var strfl = justdigs.Length == 1 ? "0." + justdigs : justdigs[0] + "." + justdigs.Substring(1);
 				float.TryParse(strfl, out fl);
 			}
 			return fl;
@@ -5849,21 +5844,8 @@ DEL ""ExtractASD.cmd""";
 					tmr.Interval = 1000;
 					tmr.Start();
 				} else {
-					if (cbb_UpdatesChannel.SelectedIndex != 0) {
-						if (MMain.MyConfs.Read("Updates", "LatestCommit") != UpdInfo[4]) {
-							btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.TimeToUpdate];
-							tmr.Start();
-							SetUInfo();
-							grb_DownloadUpdate.Enabled = true;
-						} else {
-							btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.YouHaveLatest];
-							tmr.Start();
-							grb_DownloadUpdate.Enabled = false;
-							SetUInfo();
-						}
-					}
-					else if (flVersion("v" + Application.ProductVersion) <
-					   flVersion(UpdInfo[2]) || this.Text.Contains("dev")) {
+					var currentVer = "v" + Application.ProductVersion.Trim();
+					if (flVersion(currentVer) < flVersion(UpdInfo[2]) || this.Text.Contains("dev")) {
 						btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.TimeToUpdate];
 						tmr.Start();
 						SetUInfo();
@@ -5879,22 +5861,25 @@ DEL ""ExtractASD.cmd""";
 		}
 		void Btn_DownloadUpdateClick(object sender, EventArgs e) {
 			if (!updating && UpdInfo != null) {
+				var url = UpdInfo[3];
+				if (string.IsNullOrEmpty(url) || !url.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) {
+					try {
+						Process.Start(new ProcessStartInfo { FileName = url ?? "https://github.com/NGorov/Mahou/releases", UseShellExecute = true });
+					} catch (Exception ex) { Logging.Log("Open releases page error: " + ex.Message, 1); }
+					return;
+				}
 				updating = true;
-				//Downloads latest Mahou
 				using (var wc = new WebClient()) {
 					wc.DownloadProgressChanged += wc_DownloadProgressChanged;
-					// Gets filename from url
 					var BDMText = btn_DownloadUpdate.Text;
-					var fn = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
+					var fn = Regex.Match(url, @"[^\\\/]+$").Groups[0].Value;
 					if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
 						wc.Proxy = MakeProxy();
 					}
-					if (UpdInfo.Length > 4)
-						MMain.MyConfs.WriteSave("Updates", "LatestCommit", UpdInfo[4]);
-					else MMain.MyConfs.WriteSave("Updates", "LatestCommit", "Downgraded to Stable");
-					Logging.Log("Downloading Mahou update: "+UpdInfo[3]);
+					MMain.MyConfs.WriteSave("Updates", "LatestCommit", UpdInfo.Length > 4 && !string.IsNullOrEmpty(UpdInfo[4]) ? UpdInfo[4] : UpdInfo[2]);
+					Logging.Log("Downloading Mahou update: "+url);
 					try {
-						wc.DownloadFileAsync(new Uri(UpdInfo[3]), Path.Combine(Path.GetTempPath(), fn));
+						wc.DownloadFileAsync(new Uri(url), Path.Combine(Path.GetTempPath(), fn));
 						btn_DownloadUpdate.Text = "Downloading " + fn;
 						animate.Tick += (_, __) => { btn_DownloadUpdate.Text += "."; };
 						animate.Start();
