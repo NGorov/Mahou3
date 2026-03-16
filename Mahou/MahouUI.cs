@@ -1154,8 +1154,8 @@ namespace Mahou {
 					CreateAutoStart();
 			}
 			else {
-				if(AutoStartExist(AutoStartAsAdmin))
-					AutoStartRemove(AutoStartAsAdmin);
+				AutoStartRemove(true);
+				AutoStartRemove(false);
 			}
 			var exist = File.Exists(Path.Combine(nPath,"Mahou.ini"));
 			if (latest_save_dir != nPath && exist) only_load = true;
@@ -1168,6 +1168,7 @@ namespace Mahou {
 				tmpLangTTAppearenceIndex = lsb_LangTTAppearenceForList.SelectedIndex;
 				tmpHotkeysIndex = lsb_Hotkeys.SelectedIndex;
 				#region Functions
+				MMain.MyConfs.Write("Functions", "AutoStart", chk_AutoStart.Checked.ToString());
 				MMain.MyConfs.Write("Functions", "AutoStartAsAdmin", AutoStartAsAdmin.ToString());
 				MMain.MyConfs.Write("Functions", "TrayIconVisible", chk_TrayIcon.Checked.ToString());
 				MMain.MyConfs.Write("Functions", "ConvertSelectionLayoutSwitching", chk_CSLayoutSwitching.Checked.ToString());
@@ -1698,7 +1699,8 @@ namespace Mahou {
 			#region Functions
 			MMain.MyConfs = new Configs();
 			AutoStartAsAdmin = MMain.MyConfs.ReadBool("Functions", "AutoStartAsAdmin");
-			chk_AutoStart.Checked = AutoStartExist(AutoStartAsAdmin);
+			var autoStartVal = MMain.MyConfs.Read("Functions", "AutoStart");
+			chk_AutoStart.Checked = !string.IsNullOrEmpty(autoStartVal) && bool.TryParse(autoStartVal, out var ast) ? ast : AutoStartExist(AutoStartAsAdmin);
 			lbl_TaskExist.Visible = AutoStartExist(true);
 			lbl_LinkExist.Visible = AutoStartExist(false);
 			ConvertSelectionLS = chk_CSLayoutSwitching.Checked = MMain.MyConfs.ReadBool("Functions", "ConvertSelectionLayoutSwitching");
@@ -5724,8 +5726,8 @@ DEL ""ExtractASD.cmd""";
 			}
 		}
 		void Btn_OKClick(object sender, EventArgs e) {
-			ToggleVisibility();
 			SaveConfigs();
+			ToggleVisibility();
 		}
 		void Btn_ApplyClick(object sender, EventArgs e) {
 			SaveConfigs();

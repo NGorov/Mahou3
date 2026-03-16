@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -574,6 +574,7 @@ namespace Mahou {
             CheckBool("Functions", "ReSelect", "true");
             CheckBool("Functions", "ConvertSelectionLayoutSwitching", "false");
             CheckBool("Functions", "TrayIconVisible", "true");
+            CheckBool("Functions", "AutoStart", "false");
             CheckBool("Functions", "AutoStartAsAdmin", "false");
             #endregion
         	#region FirstStart section

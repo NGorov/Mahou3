@@ -4894,7 +4894,7 @@ namespace Mahou
 			// 
 			// btn_OK
 			// 
-			this.btn_OK.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.btn_OK.DialogResult = System.Windows.Forms.DialogResult.None;
 			this.btn_OK.Location = new System.Drawing.Point(12, 324);
 			this.btn_OK.Name = "btn_OK";
 			this.btn_OK.Size = new System.Drawing.Size(121, 27);
