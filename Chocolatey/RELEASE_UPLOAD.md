@@ -4,12 +4,12 @@ The Chocolatey package downloads `Release_x86_x64.zip` from GitHub **Assets**
 (not from the release description text). The URL used in the install script is:
 
 ```
-https://github.com/NGorov/Mahou/releases/download/v3.0/Release_x86_x64.zip
+https://github.com/NGorov/Mahou3/releases/download/v3.0/Release_x86_x64.zip
 ```
 
 ## Steps to attach the binary as a release asset
 
-1. Go to https://github.com/NGorov/Mahou/releases/tag/v3.0
+1. Go to https://github.com/NGorov/Mahou3/releases/tag/v3.0
 2. Click **Edit release**
 3. Scroll down to the **"Attach binaries by dropping them here or selecting them"** area
 4. Drag-and-drop (or select) `Release_x86_x64.zip` — do **not** paste it into the description text field

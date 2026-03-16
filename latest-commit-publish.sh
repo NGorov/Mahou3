@@ -1,7 +1,7 @@
 #!/bin/bash
 # First run the Mahou/build-all.cmd
 if [ ! -d "BUILD" ]; then echo "No assets..."; exit 0; fi
-API='https://api.github.com/repos/NGorov/Mahou/'
+API='https://api.github.com/repos/NGorov/Mahou3/'
 TAG="latest-commit"
 TOKEN="$(<~/.github_token)"
 CSH=$(git log -1 --pretty=format:%h)

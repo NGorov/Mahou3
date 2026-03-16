@@ -4273,14 +4273,14 @@ DEL /Q /F /A ""%TEMP%\UpdateMahou.cmd""";
 		string getASD_RemoteSize(bool InZip = false) {
 			try {
 				if (InZip) {
-					var data = getResponce("https://api.github.com/repos/NGorov/Mahou/releases/tags/latest-commit"); 
+					var data = getResponce("https://api.github.com/repos/NGorov/Mahou3/releases/tags/latest-commit"); 
 					if (!String.IsNullOrEmpty(data)) {
 						var siz = (Int32.Parse(Regex.Match(data, "\"AS_Dict\\.zip.*?\"size\":\\s*(\\d+)").Groups[1].Value) / 1024 / 1024) + " MB";
 						Logging.Log("Remote size of AS_dict: " + siz);
 						return siz;
 					} else throw new Exception(MMain.Lang[Languages.Element.NetError]);
 				} 
-				var request = (HttpWebRequest)WebRequest.Create("https://raw.githubusercontent.com/NGorov/Mahou/main/AS_dict.txt");
+				var request = (HttpWebRequest)WebRequest.Create("https://raw.githubusercontent.com/NGorov/Mahou3/main/AS_dict.txt");
 				if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
 					request.Proxy = MakeProxy();
 				}
@@ -4360,7 +4360,7 @@ DEL /Q /F /A ""%TEMP%\UpdateMahou.cmd""";
 						if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
 							wc.Proxy = MakeProxy();
 						}
-						wc.DownloadFile(new Uri("https://github.com/NGorov/Mahou/releases/download/latest-commit/AS_dict.zip"), zip);
+						wc.DownloadFile(new Uri("https://github.com/NGorov/Mahou3/releases/download/latest-commit/AS_dict.zip"), zip);
 						var ExtractASD = @"@ECHO OFF
 chcp 65001
 ECHO With CreateObject(""Shell.Application"") > ""unzip.vbs""
@@ -4385,7 +4385,7 @@ DEL ""ExtractASD.cmd""";
 						File.Delete(Path.Combine(Path.GetTempPath(), "AS_dict.txt"));
                  	}
 			} else
-				resp = getResponce("https://raw.githubusercontent.com/NGorov/Mahou/main/AS_dict.txt");
+				resp = getResponce("https://raw.githubusercontent.com/NGorov/Mahou3/main/AS_dict.txt");
 			btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.Checking];
 			var dict = Regex.Replace(resp, "\r?\n", Environment.NewLine);
 			tmr.Interval = 300;
@@ -4430,11 +4430,11 @@ DEL ""ExtractASD.cmd""";
 			return t.Substring(c,t.Length-(c+1));
 		}
 		/// <summary>
-		/// Gets update info from https://github.com/NGorov/Mahou/releases, sets static [UpdInfo].
+		/// Gets update info from https://github.com/NGorov/Mahou3/releases, sets static [UpdInfo].
 		/// </summary>
 		void GetUpdateInfo() {
 			var Info = new string[5] {"","","","",""} ; // Update info
-			var url = "https://api.github.com/repos/NGorov/Mahou/releases/latest";
+			var url = "https://api.github.com/repos/NGorov/Mahou3/releases/latest";
 			var data = getResponce(url);
 			if (!String.IsNullOrEmpty(data)) {
 				var a = new Auri(data);
@@ -4461,7 +4461,7 @@ DEL ""ExtractASD.cmd""";
 				if (string.IsNullOrEmpty(Link) && !string.IsNullOrEmpty(aa["^0"]))
 					Link = trimlr(new Auri(aa["^0"])["browser_download_url"]);
 				if (string.IsNullOrEmpty(Link))
-					Link = "https://github.com/NGorov/Mahou/releases";
+					Link = "https://github.com/NGorov/Mahou3/releases";
 				Info[0] = Title;
 				Info[1] = UnescapeUnicode(Description);
 				Info[2] = Version;
@@ -5107,22 +5107,22 @@ DEL ""ExtractASD.cmd""";
 			__lopen(Logging.log, "txt", e.Button == MouseButtons.Right);
 		}
 		void Lnk_RepositoryLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("https://github.com/NGorov/Mahou", "http", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/NGorov/Mahou3", "http", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_SiteLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("https://github.com/NGorov/Mahou/", "http", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/NGorov/Mahou3/", "http", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_WikiLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("https://github.com/NGorov/Mahou/wiki", "http", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/NGorov/Mahou3/wiki", "http", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_ReleasesLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("https://github.com/NGorov/Mahou/releases", "http", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/NGorov/Mahou3/releases", "http", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_EmailLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
 			__lopen("mailto:ngorov83@gmail.com", "mailto", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_pluginLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("https://github.com/NGorov/MahouCaretDisplayServer", "http", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/NGorov/Mahou3/wiki", "http", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_SnipOpenLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
 			__lopen(snipfile, "txt");
@@ -5864,7 +5864,7 @@ DEL ""ExtractASD.cmd""";
 				var url = UpdInfo[3];
 				if (string.IsNullOrEmpty(url) || !url.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) {
 					try {
-						Process.Start(new ProcessStartInfo { FileName = url ?? "https://github.com/NGorov/Mahou/releases", UseShellExecute = true });
+						Process.Start(new ProcessStartInfo { FileName = url ?? "https://github.com/NGorov/Mahou3/releases", UseShellExecute = true });
 					} catch (Exception ex) { Logging.Log("Open releases page error: " + ex.Message, 1); }
 					return;
 				}
